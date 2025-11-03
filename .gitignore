@@ -1,0 +1,13 @@
+# Object files
+*.o
+
+# Executable
+hsh
+
+# Backup / temporary files
+*~
+*.swp
+.DS_Store
+
+# Logs
+*.log
