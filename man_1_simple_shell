@@ -1,0 +1,61 @@
+.TH simple_shell 1 "November 2025" "Holberton School" "User Commands"
+.SH NAME
+simple_shell \- a simple UNIX command interpreter
+
+.SH SYNOPSIS
+.B ./hsh
+[\fICOMMAND\fR]
+
+.SH DESCRIPTION
+.B simple_shell
+is a basic UNIX command interpreter written in C as part of the Holberton School curriculum.
+It mimics the functionality of the standard shell, allowing the user to execute commands
+in both interactive and non\-interactive modes.
+
+The shell:
+.IP \(bu 2
+Displays a prompt and waits for the user to type a command.
+.IP \(bu 2
+Executes commands using
+.BR fork (2)
+and
+.BR execve (2).
+.IP \(bu 2
+Handles the
+.B PATH
+environment variable to locate executables.
+.IP \(bu 2
+Implements built\-in commands:
+.BR exit
+and
+.BR env .
+
+.SH OPTIONS
+This program has no options.
+Use it as a standalone executable.
+
+.SH EXAMPLES
+Run the shell in interactive mode:
+.PP
+.nf
+$ ./hsh
+($) /bin/ls
+main.c shell.c README.md
+($) exit
+.fi
+
+Run in non\-interactive mode:
+.PP
+.nf
+$ echo "/bin/ls" | ./hsh
+main.c shell.c README.md
+.fi
+
+.SH AUTHOR
+Written by Jawad Mohammad Alrajhi and Nawaf Saleh Alzahrani
+as part of the Holberton School curriculum.
+
+.SH SEE ALSO
+.BR sh (1),
+.BR execve (2),
+.BR fork (2)
