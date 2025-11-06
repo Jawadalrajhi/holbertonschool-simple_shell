@@ -10,11 +10,9 @@ void execute_command(char *command)
 {
  pid_t pid;
     int status;
-    char *path;
     char *argv[2];
 
-    path = find_path(command);
-    if (!path)
+    if (access(command, X_OK) != 0)
     {
         fprintf(stderr, "%s: command not found\n", command);
         return;
@@ -23,9 +21,9 @@ void execute_command(char *command)
     pid = fork();
     if (pid == 0)
     {
-        argv[0] = path;
+        argv[0] = command;
         argv[1] = NULL;
-        execve(path, argv, environ);
+        execve(command, argv, environ);
         perror("execve");
         exit(EXIT_FAILURE);
     }
@@ -37,6 +35,4 @@ void execute_command(char *command)
     {
         perror("fork");
     }
-
-    free(path);
 }
