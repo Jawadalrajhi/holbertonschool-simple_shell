@@ -8,6 +8,46 @@
  */
 char *find_path(char *command)
 {
-    /* TODO: Implement PATH resolution logic (by Nawaf) */
-    return (NULL);
+   char *path_env = getenv("PATH");
+    char *path_copy, *dir, *full_path;
+    struct stat st;
+    size_t len;
+
+    if (!path_env)
+        return NULL;
+
+    if (command[0] == '/' || command[0] == '.')
+    {
+        if (stat(command, &st) == 0)
+            return strdup(command);
+        else
+            return NULL;
+    }
+
+    path_copy = strdup(path_env);
+    dir = strtok(path_copy, ":");
+    while (dir)
+    {
+        len = strlen(dir) + strlen(command) + 2;
+        full_path = malloc(len);
+        if (!full_path)
+        {
+            free(path_copy);
+            return NULL;
+        }
+
+        snprintf(full_path, len, "%s/%s", dir, command);
+
+        if (access(full_path, X_OK) == 0)
+        {
+            free(path_copy);
+            return full_path;
+        }
+
+        free(full_path);
+        dir = strtok(NULL, ":");
+    }
+
+    free(path_copy);
+    return NULL;
 }
