@@ -7,5 +7,5 @@
  */
 void display_prompt(void)
 {
-    /* TODO: Implement prompt display logic later */
+    write(STDOUT_FILENO, "#cisfun$ ", 9);
 }
