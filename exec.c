@@ -8,7 +8,7 @@
  */
 void execute_command(char *command)
 {
-  pid_t pid;
+ pid_t pid;
     int status;
     char *path;
     char *argv[2];
@@ -23,7 +23,7 @@ void execute_command(char *command)
     pid = fork();
     if (pid == 0)
     {
-        argv[0] = command;
+        argv[0] = path;
         argv[1] = NULL;
         execve(path, argv, environ);
         perror("execve");
