@@ -8,8 +8,8 @@
  */
 void handle_exit(char *input)
 {
-    if (strcmp(input, "exit") == 0)
-        exit(0);
+   free(input);
+    exit(0);
 }
 
 /**
@@ -19,8 +19,10 @@ void handle_exit(char *input)
  */
 void handle_env(void)
 {
-    int i;
-
-    for (i = 0; environ[i]; i++)
+    int i = 0;
+    while (environ[i])
+    {
         printf("%s\n", environ[i]);
+        i++;
+    }
 }
