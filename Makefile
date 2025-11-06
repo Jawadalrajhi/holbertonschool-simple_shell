@@ -30,3 +30,7 @@ fclean: clean
 
 # Recompile everything from scratch
 re: fclean all
+
+# Run the shell for testing
+run: all
+	./$(NAME)
