@@ -20,7 +20,7 @@ int main(void)
             break;
         }
 
-        /* إزالة المسافات */
+      
         input[strcspn(input, "\n")] = '\0';
         if (strlen(input) == 0)
         {
