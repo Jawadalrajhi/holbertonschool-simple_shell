@@ -15,10 +15,9 @@ extern char **environ;
 /* Function prototypes */
 void display_prompt(void);
 char *read_input(void);
-void execute_command(char *command);
+void execute_command(char **args);
 char *find_path(char *command);
-void handle_exit(char *input);
-void handle_env(void);
+int handle_builtin(char **args);
 char **tokenize_input(char *input);
 void free_tokens(char **tokens);
 
