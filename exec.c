@@ -2,37 +2,51 @@
 
 /**
  * execute_command - Executes a given command
- * @command: The command to execute
+ * @args: Array of command arguments
  *
  * Return: void
  */
 void execute_command(char **args)
 {
- pid_t pid;
+    pid_t pid;
     int status;
-    char *argv[2];
+    char *path;
 
-    if (access(command, X_OK) != 0)
+    if (args == NULL || args[0] == NULL)
+        return;
+
+    path = find_path(args[0]);
+    if (path == NULL)
     {
-        fprintf(stderr, "%s: command not found\n", command);
+        fprintf(stderr, "%s: command not found\n", args[0]);
+        return;
+    }
+
+    if (access(path, X_OK) != 0)
+    {
+        fprintf(stderr, "%s: Permission denied\n", args[0]);
+        free(path);
         return;
     }
 
     pid = fork();
     if (pid == 0)
     {
-        argv[0] = command;
-        argv[1] = NULL;
-        execve(command, argv, environ);
-        perror("execve");
-        exit(EXIT_FAILURE);
+        if (execve(path, args, environ) == -1)
+        {
+            perror("execve");
+            free(path);
+            exit(EXIT_FAILURE);
+        }
     }
-    else if (pid > 0)
-    {
-        waitpid(pid, &status, 0);
-    }
-    else
+    else if (pid < 0)
     {
         perror("fork");
     }
+    else
+    {
+        waitpid(pid, &status, 0);
+    }
+
+    free(path);
 }
