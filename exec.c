@@ -6,7 +6,7 @@
  *
  * Return: void
  */
-void execute_command(char *command)
+void execute_command(char **args)
 {
  pid_t pid;
     int status;
