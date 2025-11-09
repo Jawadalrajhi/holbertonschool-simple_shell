@@ -7,7 +7,7 @@
  */
 int main(void)
 {
-     char *input;
+    char *input;
     char **args;
 
     while (1)
@@ -20,7 +20,6 @@ int main(void)
             break;
         }
 
-      
         input[strcspn(input, "\n")] = '\0';
         if (strlen(input) == 0)
         {
@@ -28,25 +27,16 @@ int main(void)
             continue;
         }
 
-        if (strcmp(input, "exit") == 0)
-        {
-            handle_exit(input);
-        }
-
-        if (strcmp(input, "env") == 0)
-        {
-            handle_env();
-            free(input);
-            continue;
-        }
-
         args = tokenize_input(input);
         if (args && args[0])
-            execute_command(args[0]);
+        {
+            if (handle_builtin(args) == 0)
+                execute_command(args);
+        }
 
         free_tokens(args);
         free(input);
     }
 
-    return 0;
+    return (0);
 }
