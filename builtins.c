@@ -1,28 +1,32 @@
 #include "shell.h"
 
 /**
- * handle_exit - Handles the built-in exit command
- * @input: User input string
+ * handle_builtin - Handles built-in commands like exit and env
+ * @args: Array of command arguments
  *
- * Return: void
+ * Return: 1 if a built-in command was executed, 0 otherwise
  */
-void handle_exit(char *input)
+int handle_builtin(char **args)
 {
-   free(input);
-    exit(0);
-}
+    int i;
 
-/**
- * handle_env - Handles the built-in env command
- *
- * Return: void
- */
-void handle_env(void)
-{
-    int i = 0;
-    while (environ[i])
+    if (args[0] == NULL)
+        return (0);
+
+    /* Built-in: exit */
+    if (strcmp(args[0], "exit") == 0)
     {
-        printf("%s\n", environ[i]);
-        i++;
+        free_tokens(args);
+        exit(0);
     }
+
+    /* Built-in: env */
+    if (strcmp(args[0], "env") == 0)
+    {
+        for (i = 0; environ[i]; i++)
+            printf("%s\n", environ[i]);
+        return (1);
+    }
+
+    return (0);
 }
