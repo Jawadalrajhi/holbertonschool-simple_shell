@@ -3,22 +3,49 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <sys/stat.h>
-#include <errno.h>
 
-extern char **environ;
+/**
+ * struct builtin_cmd - Struct for built-in commands
+ * @name: command name
+ * @func: function to execute the command
+ */
+typedef struct builtin_cmd
+{
+	char *name;
+	int (*func)(char **args, char **env);
+} builtin_cmd;
 
-/* Function prototypes */
+/* ======= Built-in Commands ======= */
+int is_internal_command(char *cmd);
+int run_internal(char *cmd, char **args, char **env);
+int show_env(char **args, char **env);
+int str_to_int(char *s, char *prog_name);
+
+/* ======= Execution ======= */
+int execute(char *cmd, char **env, char **argv, int line_num, char *prog_name);
+int wait_for_child(char *full_path, char *cmd);
+void execute_child(char *full_path, char **argv, char **env, char *cmd);
+int is_in_path(char *cmd, char **env);
+char *get_full_path(char *cmd, char **env);
+
+/* ======= Parsing ======= */
+int count_words(char *s);
+void free_args(char **args);
+int parse_cmd(char **cmd, char ***args, char *input);
+int get_cmd(char **buffer, size_t *size);
+
+/* ======= Utilities ======= */
+char *fetch_env_value(char *name, char **env);
+int shell_non_interactive(void);
+int str_is_numeric(char *s);
+
+/* ======= Input / Output ======= */
 void display_prompt(void);
 char *read_input(void);
-void execute_command(char **args);
-char *find_path(char *command);
-int handle_builtin(char **args);
-char **tokenize_input(char *input);
-void free_tokens(char **tokens);
 
 #endif /* SHELL_H */
+
