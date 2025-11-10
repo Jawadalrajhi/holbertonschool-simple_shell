@@ -1,32 +1,67 @@
 #include "shell.h"
 
+/* List of available built-in commands */
+static builtin_cmd command_table[] = {
+	{"env", show_env},
+	/* Add more built-ins here if needed */
+};
+
 /**
- * handle_builtin - Handles built-in commands like exit and env
- * @args: Array of command arguments
+ * is_internal_command - checks if a command is built-in
+ * @cmd: command name
  *
- * Return: 1 if a built-in command was executed, 0 otherwise
+ * Return: 1 if built-in, 0 otherwise
  */
-int handle_builtin(char **args)
+int is_internal_command(char *cmd)
 {
-    int i;
+	int i;
 
-    if (args[0] == NULL)
-        return (0);
-
-    /* Built-in: exit */
-    if (strcmp(args[0], "exit") == 0)
-    {
-        free_tokens(args);
-        exit(0);
-    }
-
-    /* Built-in: env */
-    if (strcmp(args[0], "env") == 0)
-    {
-        for (i = 0; environ[i]; i++)
-            printf("%s\n", environ[i]);
-        return (1);
-    }
-
-    return (0);
+	for (i = 0; i < (int)(sizeof(command_table) / sizeof(command_table[0])); i++)
+	{
+		if (strcmp(command_table[i].name, cmd) == 0)
+			return (1);
+	}
+	return (0);
 }
+
+/**
+ * run_internal - runs a built-in command if available
+ * @cmd: command name
+ * @args: arguments
+ * @env: environment variables
+ *
+ * Return: status code from the built-in command
+ */
+int run_internal(char *cmd, char **args, char **env)
+{
+	int i;
+
+	for (i = 0; i < (int)(sizeof(command_table) / sizeof(command_table[0])); i++)
+	{
+		if (strcmp(command_table[i].name, cmd) == 0)
+			return (command_table[i].func(args, env));
+	}
+	return (127);
+}
+
+/**
+ * show_env - prints environment variables
+ * @args: command arguments (unused)
+ * @env: environment variables
+ *
+ * Return: Always 0
+ */
+int show_env(char **args, char **env)
+{
+	int i = 0;
+
+	(void)args;
+
+	while (env[i])
+	{
+		printf("%s\n", env[i]);
+		i++;
+	}
+	return (0);
+}
+
