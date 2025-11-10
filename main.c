@@ -1,42 +1,45 @@
 #include "shell.h"
 
 /**
- * main - Entry point for the simple shell program
+ * main - Entry point of the shell
+ * @ac: argument count
+ * @av: argument vector
+ * @env: environment variables
  *
- * Return: Always 0
+ * Return: exit status
  */
-int main(void)
+int main(int ac, char **av, char **env)
 {
-    char *input;
-    char **args;
+	char *input = NULL, *cmd = NULL;
+	char **args = NULL;
+	size_t size = 0;
+	int line_num = 0, status = 0;
 
-    while (1)
-    {
-        display_prompt();
-        input = read_input();
-        if (!input)
-        {
-            write(STDOUT_FILENO, "\n", 1);
-            break;
-        }
+	(void)ac;
 
-        input[strcspn(input, "\n")] = '\0';
-        if (strlen(input) == 0)
-        {
-            free(input);
-            continue;
-        }
+	while (1)
+	{
+		args = NULL;
+		line_num++;
 
-        args = tokenize_input(input);
-        if (args && args[0])
-        {
-            if (handle_builtin(args) == 0)
-                execute_command(args);
-        }
+		if (isatty(STDIN_FILENO))
+			display_prompt();
 
-        free_tokens(args);
-        free(input);
-    }
+		if (get_cmd(&input, &size) == -1)
+			break;
 
-    return (0);
+		if (parse_cmd(&cmd, &args, input) == -1)
+			continue;
+
+		if (is_internal_command(cmd))
+			status = run_internal(cmd, args, env);
+		else
+			status = execute(cmd, env, args, line_num, av[0]);
+
+		free_args(args);
+	}
+
+	free(input);
+	return (status);
 }
+
