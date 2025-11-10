@@ -1,62 +1,62 @@
 #include "shell.h"
 
-char *read_input(void)
-{
-    char *input = NULL;
-    size_t len = 0;
-    ssize_t nread;
-
-    nread = getline(&input, &len, stdin);
-    if (nread == -1)
-    {
-        free(input);
-        return NULL;
-    }
-    return input;
-}
 /**
- * tokenize_input - Splits input string into tokens
- * @input: The input string to split
+ * fetch_env_value - retrieves the value of a given environment variable
+ * @name: the variable name to look for
+ * @env: the environment variables array
  *
- * Return: Array of token strings
+ * Return: pointer to the variable value, or NULL if not found
  */
-char **tokenize_input(char *input)
+char *fetch_env_value(char *name, char **env)
 {
-     char **tokens = NULL;
-    char *token;
-    size_t count = 0;
+	int i = 0, j;
+	char *ptr;
 
-    token = strtok(input, " \t");
-    while (token)
-    {
-        tokens = realloc(tokens, sizeof(char *) * (count + 2));
-        if (!tokens)
-            return NULL;
+	if (!name || !env)
+		return (NULL);
 
-        tokens[count] = strdup(token);
-        count++;
-        token = strtok(NULL, " \t");
-    }
+	while (env[i])
+	{
+		ptr = env[i];
+		j = 0;
 
-    if (tokens)
-        tokens[count] = NULL;
+		while (*ptr && name[j] && name[j] == *ptr)
+		{
+			ptr++;
+			j++;
+			if (*ptr == '=' && name[j] == '\0')
+				return (ptr + 1);
+		}
+		i++;
+	}
 
-    return tokens;
+	return (NULL);
 }
 
 /**
- * free_tokens - Frees memory allocated for tokens
- * @tokens: Array of strings to free
+ * shell_non_interactive - checks if the shell runs in non-interactive mode
  *
- * Return: void
+ * Return: 1 if non-interactive, otherwise 0
  */
-void free_tokens(char **tokens)
+int shell_non_interactive(void)
 {
-    size_t i = 0;
-    if (!tokens)
-        return;
-
-    while (tokens[i])
-        free(tokens[i++]);
-    free(tokens);
+	return (!isatty(STDIN_FILENO));
 }
+
+/**
+ * str_is_numeric - checks if a given string contains only digits
+ * @s: string to check
+ *
+ * Return: 1 if the string is numeric, otherwise 0
+ */
+int str_is_numeric(char *s)
+{
+	if (*s == '\0')
+		return (1);
+
+	if (*s < '0' || *s > '9')
+		return (0);
+
+	return (str_is_numeric(s + 1));
+}
+
