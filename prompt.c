@@ -1,33 +1,45 @@
 #include "shell.h"
 
 /**
- * display_prompt - prints the shell prompt
- */
-void display_prompt(void)
-{
-	if (isatty(STDIN_FILENO))
-		write(STDOUT_FILENO, "$ ", 2);
-}
-
-/**
- * get_cmd - reads input from stdin
- * @buffer: pointer to store input string
- * @size: pointer to buffer size
+ * main - Entry point of the shell
+ * @ac: argument count
+ * @av: argument vector
+ * @env: environment variables
  *
- * Return: 0 on success, -1 on failure
+ * Return: exit status
  */
-int get_cmd(char **buffer, size_t *size)
+int main(int ac, char **av, char **env)
 {
-	ssize_t read_bytes;
+	char *input = NULL, *cmd = NULL;
+	char **args = NULL;
+	size_t size = 0;
+	int line_num = 0, status = 0;
 
-	read_bytes = getline(buffer, size, stdin);
+	(void)ac;
 
-	if (read_bytes == -1)
-		return (-1);
+	while (1)
+	{
+		args = NULL;
+		line_num++;
 
-	if ((*buffer)[read_bytes - 1] == '\n')
-		(*buffer)[read_bytes - 1] = '\0';
+		if (isatty(STDIN_FILENO))
+			display_prompt();
 
-	return (0);
+		if (get_cmd(&input, &size) == -1)
+			break;
+
+		if (parse_cmd(&cmd, &args, input) == -1)
+			continue;
+
+		if (is_internal_command(cmd))
+			status = run_internal(cmd, args, env);
+		else
+			status = execute(cmd, env, args, line_num, av[0]);
+
+		free_args(args);
+	}
+
+	free(input);
+	return (status);
 }
 
