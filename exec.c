@@ -50,30 +50,32 @@ int wait_for_child(char *full_path, char *cmd)
  */
 int execute(char *cmd, char **env, char **argv, int line_num, char *prog_name)
 {
-        pid_t pid;
-        char *full_path;
+	pid_t pid;
+	char *full_path;
 
-        if (!cmd || !*cmd)
-                return (0);
+	if (!cmd || !*cmd)
+		return (0);
 
-        full_path = get_full_path(cmd, env);
-        if (!full_path)
-        {
-                fprintf(stderr, "%s: %d: %s: not found\n", prog_name, line_num, cmd);
-                return (127);
-        }
+	full_path = get_full_path(cmd, env);
+	if (!full_path)
+	{
+		fprintf(stderr, "%s: %d: %s: not found\n", prog_name, line_num, cmd);
+		return (127);
+	}
 
-        pid = fork();
-        if (pid == -1)
-        {
-                perror("fork");
-                free(full_path);
-                return (-1);
-        }
-        else if (pid == 0)
-                execute_child(full_path, argv, env, cmd);
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		free(full_path);
+		return (-1);
+	}
+	else if (pid == 0)
+	{
+		execute_child(full_path, argv, env, cmd);
+	}
 
-        return (wait_for_child(full_path, cmd));
+	return (wait_for_child(full_path, cmd));
 }
 
 /**
@@ -177,4 +179,3 @@ char *get_full_path(char *cmd, char **env)
 	free(copy);
 	return (NULL);
 }
-
