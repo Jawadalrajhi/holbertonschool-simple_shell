@@ -24,6 +24,7 @@ int is_internal_command(char *cmd);
 int run_internal(char *cmd, char **args, char **env);
 int show_env(char **args, char **env);
 int str_to_int(char *s, char *prog_name);
+int exit_shell(char **args, char **env);
 
 /* ======= Execution ======= */
 int execute(char *cmd, char **env, char **argv, int line_num, char *prog_name);
