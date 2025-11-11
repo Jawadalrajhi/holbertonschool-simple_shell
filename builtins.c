@@ -1,82 +1,60 @@
-#include "shell.h"
-
-/* List of available built-in commands */
-static builtin_cmd command_table[] = {
-	{"env", show_env},
-	{"exit", exit_shell},
-	/* Add more built-ins here if needed */
-};
+#include "main.h"
 
 /**
- * is_internal_command - checks if a command is built-in
- * @cmd: command name
- *
- * Return: 1 if built-in, 0 otherwise
- */
-int is_internal_command(char *cmd)
+	* handle_exit - Handles the exit built-in command
+	* @line: The input line to free
+	* @args: The argument array to free
+	* @status: The last exit status to return
+	*
+	* Return: void (exits the program)
+	*/
+void handle_exit(char *line, char **args, int status)
 {
-	int i;
+	free(line);
+	free_array(args);
+	exit(status);
+}
 
-	for (i = 0; i < (int)(sizeof(command_table) / sizeof(command_table[0])); i++)
+/**
+	* handle_env - Handles the env built-in command
+	*
+	* Return: 0 on success
+	*/
+int handle_env(void)
+{
+	char **env = environ;
+
+	while (*env)
 	{
-		if (strcmp(command_table[i].name, cmd) == 0)
-			return (1);
+	printf("%s\n", *env);
+	env++;
 	}
 	return (0);
 }
 
 /**
- * run_internal - runs a built-in command if available
- * @cmd: command name
- * @args: arguments
- * @env: environment variables
- *
- * Return: status code from the built-in command
- */
-int run_internal(char *cmd, char **args, char **env)
+	* is_builtin - Checks if command is a built-in command
+	* @args: Array of command arguments
+	* @line: The input line (for memory cleanup on exit)
+	* @status: The last exit status
+	*
+	* Return: 1 if built-in executed, 0 otherwise
+	*/
+int is_builtin(char **args, char *line, int status)
 {
-	int i;
+	if (args == NULL || args[0] == NULL)
+	return (0);
 
-	for (i = 0; i < (int)(sizeof(command_table) / sizeof(command_table[0])); i++)
+	if (strcmp(args[0], "exit") == 0)
 	{
-		if (strcmp(command_table[i].name, cmd) == 0)
-			return (command_table[i].func(args, env));
+	handle_exit(line, args, status);
+	return (1);
 	}
-	return (127);
-}
-
-/**
- * show_env - prints environment variables
- * @args: command arguments (unused)
- * @env: environment variables
- *
- * Return: Always 0
- */
-int show_env(char **args, char **env)
-{
-	int i = 0;
-
-	(void)args;
-	while (env[i])
+	else if (strcmp(args[0], "env") == 0)
 	{
-		printf("%s\n", env[i]);
-		i++;
+	handle_env();
+	return (1);
 	}
+
 	return (0);
 }
-
-/**
- * exit_shell - exits the shell
- * @args: command arguments (unused)
- * @env: environment variables (unused)
- *
- * Return: does not return
- */
-int exit_shell(char **args, char **env)
-{
-	(void)args;
-	(void)env;
-
-	exit(last_status);
-}
-
