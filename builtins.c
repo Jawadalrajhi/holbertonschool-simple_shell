@@ -76,5 +76,7 @@ int exit_shell(char **args, char **env)
 {
 	(void)args;
 	(void)env;
-	return (SHELL_EXIT_SIGNAL);
+
+	exit(last_status);
 }
+
