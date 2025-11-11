@@ -1,59 +1,95 @@
 #include "shell.h"
+
 /**
-	* handle_exit - Handles the exit built-in command
-	* @line: The input line to free
-	* @args: The argument array to free
-	* @status: The last exit status to return
-	*
-	* Return: void (exits the program)
-	*/
-void handle_exit(char *line, char **args, int status)
+ * exit_shell - handles the exit built-in command
+ * @args: argument array (may contain exit status)
+ * @env: environment variables (unused)
+ *
+ * Return: SHELL_EXIT_SIGNAL or exit status
+ */
+int exit_shell(char **args, char **env)
 {
-	free(line);
-	free_array(args);
-	exit(status);
+	int exit_status = last_status;
+
+	(void)env;
+
+	/* handle case: exit with numeric argument */
+	if (args[1] != NULL)
+	{
+		if (str_is_numeric(args[1]))
+			exit_status = atoi(args[1]);
+		else
+		{
+			fprintf(stderr, "exit: Illegal number: %s\n", args[1]);
+			exit_status = 2; /* mimic bash behavior */
+		}
+	}
+
+	exit(exit_status);
 }
 
 /**
-	* handle_env - Handles the env built-in command
-	*
-	* Return: 0 on success
-	*/
-int handle_env(void)
+ * show_env - prints all environment variables
+ * @args: arguments (unused)
+ * @env: environment variables
+ *
+ * Return: Always 0
+ */
+int show_env(char **args, char **env)
 {
-	char **env = environ;
+	int i = 0;
 
-	while (*env)
+	(void)args;
+	while (env[i])
 	{
-	printf("%s\n", *env);
-	env++;
+		printf("%s\n", env[i]);
+		i++;
 	}
 	return (0);
 }
 
 /**
-	* is_builtin - Checks if command is a built-in command
-	* @args: Array of command arguments
-	* @line: The input line (for memory cleanup on exit)
-	* @status: The last exit status
-	*
-	* Return: 1 if built-in executed, 0 otherwise
-	*/
-int is_builtin(char **args, char *line, int status)
+ * is_internal_command - checks if a command is a built-in
+ * @cmd: command name
+ *
+ * Return: 1 if built-in, 0 otherwise
+ */
+int is_internal_command(char *cmd)
 {
-	if (args == NULL || args[0] == NULL)
-	return (0);
+	int i;
+	static builtin_cmd command_table[] = {
+		{"env", show_env},
+		{"exit", exit_shell},
+	};
 
-	if (strcmp(args[0], "exit") == 0)
+	for (i = 0; i < (int)(sizeof(command_table) / sizeof(command_table[0])); i++)
 	{
-	handle_exit(line, args, status);
-	return (1);
+		if (strcmp(command_table[i].name, cmd) == 0)
+			return (1);
 	}
-	else if (strcmp(args[0], "env") == 0)
-	{
-	handle_env();
-	return (1);
-	}
-
 	return (0);
+}
+
+/**
+ * run_internal - executes a built-in command
+ * @cmd: command name
+ * @args: arguments
+ * @env: environment variables
+ *
+ * Return: status or SHELL_EXIT_SIGNAL
+ */
+int run_internal(char *cmd, char **args, char **env)
+{
+	int i;
+	static builtin_cmd command_table[] = {
+		{"env", show_env},
+		{"exit", exit_shell},
+	};
+
+	for (i = 0; i < (int)(sizeof(command_table) / sizeof(command_table[0])); i++)
+	{
+		if (strcmp(command_table[i].name, cmd) == 0)
+			return (command_table[i].func(args, env));
+	}
+	return (127);
 }
