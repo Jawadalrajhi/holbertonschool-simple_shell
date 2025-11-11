@@ -1,5 +1,4 @@
-#include "main.h"
-
+#include "shell.h"
 /**
 	* handle_exit - Handles the exit built-in command
 	* @line: The input line to free
