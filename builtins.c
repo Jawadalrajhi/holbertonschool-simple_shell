@@ -57,7 +57,6 @@ int show_env(char **args, char **env)
 	int i = 0;
 
 	(void)args;
-
 	while (env[i])
 	{
 		printf("%s\n", env[i]);
@@ -78,6 +77,5 @@ int exit_shell(char **args, char **env)
 	(void)args;
 	(void)env;
 
-	free_args(args);
 	exit(0);
 }
