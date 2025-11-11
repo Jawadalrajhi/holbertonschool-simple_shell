@@ -1,5 +1,7 @@
 #include "shell.h"
 
+int last_status = 0; /* holds the exit status of the last command */
+
 /**
  * main - Entry point of the shell
  * @ac: argument count
@@ -45,6 +47,7 @@ int main(int ac, char **av, char **env)
 			status = execute(cmd, env, args, line_num, av[0]);
 		}
 
+		last_status = status; /* update global status after each command */
 		free_args(args);
 	}
 
