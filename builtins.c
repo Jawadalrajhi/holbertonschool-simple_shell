@@ -5,7 +5,7 @@
  * @args: argument array (may contain exit status)
  * @env: environment variables (unused)
  *
- * Return: SHELL_EXIT_SIGNAL or exit status
+ * Return: SHELL_EXIT_SIGNAL to trigger clean exit in main
  */
 int exit_shell(char **args, char **env)
 {
@@ -13,7 +13,6 @@ int exit_shell(char **args, char **env)
 
 	(void)env;
 
-	/* handle case: exit with numeric argument */
 	if (args[1] != NULL)
 	{
 		if (str_is_numeric(args[1]))
@@ -21,11 +20,12 @@ int exit_shell(char **args, char **env)
 		else
 		{
 			fprintf(stderr, "exit: Illegal number: %s\n", args[1]);
-			exit_status = 2; /* mimic bash behavior */
+			exit_status = 2;
 		}
 	}
 
-	exit(exit_status);
+	last_status = exit_status;
+	return (SHELL_EXIT_SIGNAL);
 }
 
 /**
