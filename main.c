@@ -32,14 +32,22 @@ int main(int ac, char **av, char **env)
 			continue;
 
 		if (is_internal_command(cmd))
+		{
 			status = run_internal(cmd, args, env);
+			if (status == SHELL_EXIT_SIGNAL)
+			{
+				free_args(args);
+				break;
+			}
+		}
 		else
+		{
 			status = execute(cmd, env, args, line_num, av[0]);
+		}
 
 		free_args(args);
 	}
 
 	free(input);
-	return (status);
+	return (status == SHELL_EXIT_SIGNAL ? 0 : status);
 }
-
