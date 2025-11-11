@@ -3,6 +3,7 @@
 /* List of available built-in commands */
 static builtin_cmd command_table[] = {
 	{"env", show_env},
+	{"exit", exit_shell},
 	/* Add more built-ins here if needed */
 };
 
@@ -65,3 +66,18 @@ int show_env(char **args, char **env)
 	return (0);
 }
 
+/**
+ * exit_shell - exits the shell
+ * @args: command arguments (unused)
+ * @env: environment variables (unused)
+ *
+ * Return: does not return
+ */
+int exit_shell(char **args, char **env)
+{
+	(void)args;
+	(void)env;
+
+	free_args(args);
+	exit(0);
+}
