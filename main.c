@@ -47,10 +47,10 @@ int main(int ac, char **av, char **env)
 			status = execute(cmd, env, args, line_num, av[0]);
 		}
 
-		last_status = status; /* update global status after each command */
+		last_status = status;
 		free_args(args);
 	}
 
 	free(input);
-	return (status == SHELL_EXIT_SIGNAL ? 0 : status);
+	return (last_status);
 }
