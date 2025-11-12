@@ -51,16 +51,18 @@ echo "/bin/ls" | ./hsh
 ---
 
 ## Files
-| File | Description |
-|------|--------------|
-| `main.c` | Entry point, initializes and runs the shell loop |
-| `prompt.c` | Displays the prompt and reads user input |
-| `exec.c` | Executes commands using fork and execve |
-| `path.c` | Resolves commands in the PATH |
-| `builtins.c` | Contains built-in commands (`exit`, `env`) |
-| `utils.c` | Helper functions (string manipulation, freeing memory) |
-| `shell.h` | Header file with function prototypes |
-| `Makefile` | Compilation automation file |
+| File         | Description                                               |
+| ------------ | --------------------------------------------------------- |
+| `main.c`     | Entry point, initializes and runs the shell loop          |
+| `prompt.c`   | Displays the prompt and reads user input                  |
+| `exec.c`     | Executes commands using `fork` and `execve`               |
+| `path.c`     | Resolves commands using the system `PATH`                 |
+| `builtins.c` | Contains built-in commands (`exit`, `env`)                |
+| `parse.c`    | Parses the user input into command and arguments          |
+| `utils.c`    | Helper functions (string manipulation, freeing memory)    |
+| `shell.h`    | Header file with macros, structs, and function prototypes |
+| `Makefile`   | Compilation automation using `make`                       |
+
 
 ---
 
